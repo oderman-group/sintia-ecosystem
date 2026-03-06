@@ -47,7 +47,7 @@ Edita `includes/mailer.php` con las credenciales del servidor:
 - [ ] Archivos subidos al servidor
 - [ ] `composer install` ejecutado en el servidor
 - [ ] `vendor/autoload.php` existe
-- [ ] Credenciales SMTP configuradas en `includes/mailer.php`
+- [ ] Archivo `.env` creado desde `.env.example` con credenciales SMTP
 - [ ] `RewriteBase` en `.htaccess` configurado correctamente
 - [ ] Permisos de archivos correctos
 - [ ] Formulario de contacto probado

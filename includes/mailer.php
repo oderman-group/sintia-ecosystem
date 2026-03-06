@@ -5,6 +5,9 @@
  * O descargar manualmente desde: https://github.com/PHPMailer/PHPMailer
  */
 
+// Cargar variables de entorno
+require_once __DIR__ . '/env.php';
+
 // Si usas Composer
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/../vendor/autoload.php';
@@ -45,15 +48,22 @@ function sendContactEmail($data) {
     try {
         $mail = new PHPMailer(true);
         
-        // Configuración del servidor SMTP
-        // NOTA: Ajusta estos valores según tu configuración de correo
+        // Configuración del servidor SMTP desde variables de entorno
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com'; // Cambiar según tu proveedor
-        $mail->SMTPAuth = true;
-        $mail->Username = 'tu-email@gmail.com'; // Cambiar por tu email
-        $mail->Password = 'tu-contraseña'; // Cambiar por tu contraseña
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+        $mail->Host = defined('EMAIL_SERVER') ? EMAIL_SERVER : 'mail.plataformasintia.com';
+        $mail->SMTPAuth = defined('SMTPAUTH') ? SMTPAUTH : true;
+        $mail->Username = defined('EMAIL_USER') ? EMAIL_USER : 'info@plataformasintia.com';
+        $mail->Password = defined('EMAIL_PASSWORD') ? EMAIL_PASSWORD : '';
+        
+        // Configurar seguridad y puerto
+        $smtpSecure = defined('SMTPSECURE') ? SMTPSECURE : 'ssl';
+        if ($smtpSecure === 'ssl') {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        } else {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        }
+        
+        $mail->Port = defined('PORT_SEND_EMAIL') ? PORT_SEND_EMAIL : 465;
         $mail->CharSet = 'UTF-8';
         
         // Remitente

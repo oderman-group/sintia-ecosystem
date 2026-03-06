@@ -4,6 +4,9 @@
  * Funciones helper para URLs y assets
  */
 
+// Cargar variables de entorno al inicio
+require_once __DIR__ . '/env.php';
+
 // Detectar ruta base automáticamente
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'];

@@ -56,7 +56,9 @@ sintia-ecoystem/
    ```bash
    composer install
    ```
-5. Configurar las credenciales SMTP en `includes/mailer.php` (ver `INSTRUCCIONES-PHPMailer.md`)
+5. **Configurar credenciales SMTP**:
+   - Copia `.env.example` a `.env`: `cp .env.example .env`
+   - Edita `.env` con tus credenciales de email (ver `INSTRUCCIONES-PHPMailer.md`)
 6. Acceder al sitio desde el navegador
 
 ## ⚙️ Configuración
