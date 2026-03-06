@@ -59,7 +59,11 @@ sintia-ecoystem/
 5. **Configurar credenciales SMTP**:
    - Copia `.env.example` a `.env`: `cp .env.example .env`
    - Edita `.env` con tus credenciales de email (ver `INSTRUCCIONES-PHPMailer.md`)
-6. Acceder al sitio desde el navegador
+6. **Configurar reCAPTCHA v3** (Opcional pero recomendado):
+   - Obtén las claves en: https://www.google.com/recaptcha/admin
+   - Agrega `RECAPTCHA_SITE_KEY` y `RECAPTCHA_SECRET_KEY` en `.env`
+   - Ver `INSTRUCCIONES-RECAPTCHA.md` para más detalles
+7. Acceder al sitio desde el navegador
 
 ## ⚙️ Configuración
 

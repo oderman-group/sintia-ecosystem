@@ -30,7 +30,10 @@ if (!function_exists('loadEnv')) {
                 
                 // Definir constante si no existe
                 if (!defined($key)) {
-                    define($key, $value);
+                    // Si el valor está vacío, no definir la constante (para reCAPTCHA opcional)
+                    if ($value !== '') {
+                        define($key, $value);
+                    }
                 }
             }
         }
@@ -42,3 +45,11 @@ if (!function_exists('loadEnv')) {
 // Cargar .env desde la raíz del proyecto
 $envPath = __DIR__ . '/../.env';
 loadEnv($envPath);
+
+// Definir constantes de reCAPTCHA si no existen (con valores por defecto)
+if (!defined('RECAPTCHA_SITE_KEY')) {
+    define('RECAPTCHA_SITE_KEY', '');
+}
+if (!defined('RECAPTCHA_SECRET_KEY')) {
+    define('RECAPTCHA_SECRET_KEY', '');
+}

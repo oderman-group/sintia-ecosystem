@@ -105,7 +105,18 @@ $lang = getCurrentLang();
                                   </div>';
                         }
                         ?>
-                        <form action="<?php echo url('process-contact'); ?>" method="POST" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                        <form id="contact-form" action="<?php echo url('process-contact'); ?>" method="POST" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                            <!-- Campo honeypot (oculto para usuarios, visible para bots) -->
+                            <input type="text" name="website" id="website" tabindex="-1" autocomplete="off" 
+                                   style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" 
+                                   aria-hidden="true">
+                            
+                            <!-- Timestamp de inicio del formulario -->
+                            <input type="hidden" name="form_start_time" id="form_start_time" value="<?php echo time(); ?>">
+                            
+                            <!-- Token de reCAPTCHA -->
+                            <input type="hidden" name="recaptcha_token" id="recaptcha_token">
+                            
                             <input type="text" name="name" data-i18n-placeholder="contact.fullName" placeholder="Nombre completo" required 
                                    style="padding: 0.875rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-family: inherit;">
                             <input type="email" name="email" data-i18n-placeholder="contact.emailPlaceholder" placeholder="Email" required 
@@ -121,8 +132,41 @@ $lang = getCurrentLang();
                             </select>
                             <textarea name="message" data-i18n-placeholder="contact.message" placeholder="Mensaje" rows="4" required
                                       style="padding: 0.875rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-family: inherit; resize: vertical;"></textarea>
-                            <button type="submit" class="btn btn--primary" data-i18n="contact.sendRequest">Enviar Solicitud</button>
+                            <button type="submit" class="btn btn--primary" id="submit-btn" data-i18n="contact.sendRequest">Enviar Solicitud</button>
                         </form>
+                        
+                        <!-- reCAPTCHA v3 Script -->
+                        <?php 
+                        $recaptchaSiteKey = defined('RECAPTCHA_SITE_KEY') && !empty(RECAPTCHA_SITE_KEY) ? RECAPTCHA_SITE_KEY : '';
+                        if (!empty($recaptchaSiteKey)): 
+                        ?>
+                        <script src="https://www.google.com/recaptcha/api.js?render=<?php echo e($recaptchaSiteKey); ?>"></script>
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const form = document.getElementById('contact-form');
+                            const submitBtn = document.getElementById('submit-btn');
+                            const recaptchaToken = document.getElementById('recaptcha_token');
+                            
+                            if (form && recaptchaToken) {
+                                form.addEventListener('submit', function(e) {
+                                    e.preventDefault();
+                                    
+                                    // Deshabilitar botón para evitar doble envío
+                                    submitBtn.disabled = true;
+                                    submitBtn.textContent = 'Enviando...';
+                                    
+                                    // Obtener token de reCAPTCHA
+                                    grecaptcha.ready(function() {
+                                        grecaptcha.execute('<?php echo e($recaptchaSiteKey); ?>', {action: 'submit'}).then(function(token) {
+                                            recaptchaToken.value = token;
+                                            form.submit();
+                                        });
+                                    });
+                                });
+                            }
+                        });
+                        </script>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
