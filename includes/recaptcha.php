@@ -19,57 +19,79 @@ function validateRecaptcha($token, $secretKey, $minScore = 0.5) {
         return ['success' => false, 'score' => 0, 'message' => 'Clave secreta de reCAPTCHA no configurada.'];
     }
     
-    // Detectar si es Enterprise o estándar basado en el formato de la clave secreta
-    // Enterprise keys suelen tener un formato diferente, pero usaremos el endpoint de Enterprise
-    // que también funciona con claves estándar si es necesario
-    $url = 'https://www.google.com/recaptcha/enterprise/siteverify';
+    // Intentar primero con el endpoint estándar, luego con Enterprise si falla
+    $endpoints = [
+        'https://www.google.com/recaptcha/api/siteverify',
+        'https://www.google.com/recaptcha/enterprise/siteverify'
+    ];
+    
     $data = [
         'secret' => $secretKey,
         'response' => $token,
         'remoteip' => $_SERVER['REMOTE_ADDR'] ?? ''
     ];
     
-    // Usar cURL si está disponible (más confiable), sino usar file_get_contents
-    if (function_exists('curl_init')) {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/x-www-form-urlencoded'
-        ]);
-        
-        $result = curl_exec($ch);
-        $curlError = curl_error($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        
-        if ($result === false || !empty($curlError)) {
-            return ['success' => false, 'score' => 0, 'message' => 'Error al conectar con el servicio de reCAPTCHA: ' . $curlError];
+    $result = false;
+    $lastError = '';
+    $lastHttpCode = 0;
+    
+    // Intentar con cada endpoint hasta que uno funcione
+    foreach ($endpoints as $url) {
+        // Usar cURL si está disponible (más confiable), sino usar file_get_contents
+        if (function_exists('curl_init')) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/x-www-form-urlencoded'
+            ]);
+            
+            $result = curl_exec($ch);
+            $curlError = curl_error($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            if ($result !== false && empty($curlError) && $httpCode === 200) {
+                // Éxito, salir del bucle
+                break;
+            } else {
+                $lastError = $curlError;
+                $lastHttpCode = $httpCode;
+                $result = false;
+            }
+        } else {
+            // Fallback a file_get_contents si cURL no está disponible
+            $options = [
+                'http' => [
+                    'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                    'method' => 'POST',
+                    'content' => http_build_query($data),
+                    'timeout' => 10
+                ]
+            ];
+            
+            $context = stream_context_create($options);
+            $result = @file_get_contents($url, false, $context);
+            
+            if ($result !== false) {
+                // Éxito, salir del bucle
+                break;
+            }
         }
-        
-        if ($httpCode !== 200) {
-            return ['success' => false, 'score' => 0, 'message' => 'Error HTTP al conectar con reCAPTCHA: ' . $httpCode];
-        }
-    } else {
-        // Fallback a file_get_contents si cURL no está disponible
-        $options = [
-            'http' => [
-                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                'method' => 'POST',
-                'content' => http_build_query($data),
-                'timeout' => 10
-            ]
-        ];
-        
-        $context = stream_context_create($options);
-        $result = @file_get_contents($url, false, $context);
-        
-        if ($result === false) {
+    }
+    
+    // Si ambos endpoints fallaron, retornar error
+    if ($result === false) {
+        if (!empty($lastError)) {
+            return ['success' => false, 'score' => 0, 'message' => 'Error al conectar con el servicio de reCAPTCHA: ' . $lastError];
+        } elseif ($lastHttpCode !== 0) {
+            return ['success' => false, 'score' => 0, 'message' => 'Error HTTP al conectar con reCAPTCHA: ' . $lastHttpCode];
+        } else {
             return ['success' => false, 'score' => 0, 'message' => 'Error al conectar con el servicio de reCAPTCHA. Verifica la conectividad del servidor.'];
         }
     }

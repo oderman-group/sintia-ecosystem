@@ -19,6 +19,8 @@ desktop.ini
 config.local.php
 .env
 .env.local
+.htaccess.local
+.htaccess.production
 
 # Archivos de backup
 *.bak
