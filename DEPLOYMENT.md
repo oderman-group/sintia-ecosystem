@@ -9,9 +9,9 @@ Sube todos los archivos del proyecto al servidor, **EXCEPTO**:
 - `composer.lock` (se genera con Composer)
 - Archivos de desarrollo local
 
-### 2. Instalar dependencias con Composer
+### 2. Instalar dependencias (PHPMailer)
 
-**IMPORTANTE:** Ejecuta este comando en el servidor después de subir los archivos:
+**Opción A: Con Composer (si está disponible)**
 
 ```bash
 composer install
@@ -22,6 +22,16 @@ Este comando:
 - Descarga todas las dependencias (incluyendo PHPMailer)
 - Crea la carpeta `vendor/` con todas las librerías necesarias
 - Genera el archivo `composer.lock`
+
+**Opción B: Sin Composer (cPanel o servidores sin Composer)**
+
+Si `composer` no está disponible, usa el script de instalación manual:
+
+1. Accede desde el navegador a: `https://sintia.co/sintia/install-phpmailer.php`
+2. El script instalará PHPMailer automáticamente
+3. **IMPORTANTE:** Elimina `install-phpmailer.php` después de usar
+
+O sigue las instrucciones en `INSTALACION-SIN-COMPOSER.md` para instalación manual.
 
 ### 3. Verificar instalación
 

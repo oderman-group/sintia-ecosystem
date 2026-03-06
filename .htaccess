@@ -2,7 +2,7 @@
 
 # Habilitar RewriteEngine
 RewriteEngine On
-RewriteBase /sintia-ecoystem/
+RewriteBase /sintia/
 
 # Permitir acceso directo a archivos y directorios existentes
 RewriteCond %{REQUEST_FILENAME} -f [OR]

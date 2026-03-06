@@ -33,6 +33,11 @@ package-lock.json
 vendor/
 composer.lock
 
+# Scripts de instalación (eliminar después de usar)
+install-phpmailer.php
+PHPMailer-temp/
+phpmailer.zip
+
 # Archivos compilados
 *.min.css
 *.min.js
