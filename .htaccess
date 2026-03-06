@@ -32,8 +32,10 @@ Options -Indexes
 
 # Headers de Seguridad
 <IfModule mod_headers.c>
-    # Prevenir clickjacking
-    Header always set X-Frame-Options "SAMEORIGIN"
+    # Prevenir clickjacking (permitir frames de Google para reCAPTCHA)
+    # Nota: SAMEORIGIN permite frames del mismo origen, pero reCAPTCHA necesita frames de Google
+    # El CSP frame-src ya controla esto, así que podemos relajar X-Frame-Options o eliminarlo
+    # Header always set X-Frame-Options "SAMEORIGIN"
     
     # Prevenir MIME type sniffing
     Header always set X-Content-Type-Options "nosniff"
@@ -45,7 +47,7 @@ Options -Indexes
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     
     # Content Security Policy
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google.com;"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://www.google.com https://www.gstatic.com https://recaptcha.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google.com https://www.gstatic.com https://recaptcha.google.com; frame-src 'self' https://www.google.com https://www.gstatic.com https://recaptcha.google.com;"
 </IfModule>
 
 # Compresión GZIP

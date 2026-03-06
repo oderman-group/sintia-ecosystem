@@ -29,19 +29,49 @@ function validateRecaptcha($token, $secretKey, $minScore = 0.5) {
         'remoteip' => $_SERVER['REMOTE_ADDR'] ?? ''
     ];
     
-    $options = [
-        'http' => [
-            'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-            'method' => 'POST',
-            'content' => http_build_query($data)
-        ]
-    ];
-    
-    $context = stream_context_create($options);
-    $result = @file_get_contents($url, false, $context);
-    
-    if ($result === false) {
-        return ['success' => false, 'score' => 0, 'message' => 'Error al conectar con el servicio de reCAPTCHA.'];
+    // Usar cURL si está disponible (más confiable), sino usar file_get_contents
+    if (function_exists('curl_init')) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/x-www-form-urlencoded'
+        ]);
+        
+        $result = curl_exec($ch);
+        $curlError = curl_error($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        if ($result === false || !empty($curlError)) {
+            return ['success' => false, 'score' => 0, 'message' => 'Error al conectar con el servicio de reCAPTCHA: ' . $curlError];
+        }
+        
+        if ($httpCode !== 200) {
+            return ['success' => false, 'score' => 0, 'message' => 'Error HTTP al conectar con reCAPTCHA: ' . $httpCode];
+        }
+    } else {
+        // Fallback a file_get_contents si cURL no está disponible
+        $options = [
+            'http' => [
+                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method' => 'POST',
+                'content' => http_build_query($data),
+                'timeout' => 10
+            ]
+        ];
+        
+        $context = stream_context_create($options);
+        $result = @file_get_contents($url, false, $context);
+        
+        if ($result === false) {
+            return ['success' => false, 'score' => 0, 'message' => 'Error al conectar con el servicio de reCAPTCHA. Verifica la conectividad del servidor.'];
+        }
     }
     
     $response = json_decode($result, true);
