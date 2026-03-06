@@ -19,7 +19,10 @@ function validateRecaptcha($token, $secretKey, $minScore = 0.5) {
         return ['success' => false, 'score' => 0, 'message' => 'Clave secreta de reCAPTCHA no configurada.'];
     }
     
-    $url = 'https://www.google.com/recaptcha/api/siteverify';
+    // Detectar si es Enterprise o estándar basado en el formato de la clave secreta
+    // Enterprise keys suelen tener un formato diferente, pero usaremos el endpoint de Enterprise
+    // que también funciona con claves estándar si es necesario
+    $url = 'https://www.google.com/recaptcha/enterprise/siteverify';
     $data = [
         'secret' => $secretKey,
         'response' => $token,

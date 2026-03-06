@@ -143,7 +143,7 @@ $lang = getCurrentLang();
                         
                         if (!empty($recaptchaSiteKey)): 
                         ?>
-                        <script src="https://www.google.com/recaptcha/api.js?render=<?php echo e($recaptchaSiteKey); ?>"></script>
+                        <script src="https://www.google.com/recaptcha/enterprise.js?render=<?php echo e($recaptchaSiteKey); ?>"></script>
                         <script>
                         document.addEventListener('DOMContentLoaded', function() {
                             const form = document.getElementById('contact-form');
@@ -160,8 +160,8 @@ $lang = getCurrentLang();
                                         submitBtn.textContent = 'Enviando...';
                                     }
                                     
-                                    // Verificar que grecaptcha esté disponible
-                                    if (typeof grecaptcha === 'undefined') {
+                                    // Verificar que grecaptcha esté disponible (Enterprise)
+                                    if (typeof grecaptcha === 'undefined' || typeof grecaptcha.enterprise === 'undefined') {
                                         alert('Error: reCAPTCHA no está disponible. Por favor, recarga la página e intenta nuevamente.');
                                         if (submitBtn) {
                                             submitBtn.disabled = false;
@@ -170,9 +170,9 @@ $lang = getCurrentLang();
                                         return;
                                     }
                                     
-                                    // Obtener token de reCAPTCHA
-                                    grecaptcha.ready(function() {
-                                        grecaptcha.execute('<?php echo e($recaptchaSiteKey); ?>', {action: 'submit'}).then(function(token) {
+                                    // Obtener token de reCAPTCHA Enterprise
+                                    grecaptcha.enterprise.ready(function() {
+                                        grecaptcha.enterprise.execute('<?php echo e($recaptchaSiteKey); ?>', {action: 'submit'}).then(function(token) {
                                             if (token) {
                                                 recaptchaToken.value = token;
                                                 form.submit();
