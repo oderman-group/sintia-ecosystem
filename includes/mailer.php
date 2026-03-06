@@ -66,8 +66,9 @@ function sendContactEmail($data) {
         $mail->Port = defined('PORT_SEND_EMAIL') ? PORT_SEND_EMAIL : 465;
         $mail->CharSet = 'UTF-8';
         
-        // Remitente
-        $mail->setFrom('noreply@sintia.co', 'SINTIA - Formulario de Contacto');
+        // Remitente - Usar el email configurado en .env
+        $fromEmail = defined('EMAIL_USER') ? EMAIL_USER : 'info@plataformasintia.com';
+        $mail->setFrom($fromEmail, 'SINTIA - Formulario de Contacto');
         $mail->addReplyTo($email, $name);
         
         // Destinatario
