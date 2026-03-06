@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    
+    <!-- Página Principal -->
+    <url>
+        <loc>https://sintia.co/</loc>
+        <lastmod>2025-01-28</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+        <xhtml:link rel="alternate" hreflang="es" href="https://sintia.co/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sintia.co/?lang=en"/>
+    </url>
+    
+    <!-- Blog -->
+    <url>
+        <loc>https://sintia.co/blog</loc>
+        <lastmod>2025-01-28</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="es" href="https://sintia.co/blog"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sintia.co/blog?lang=en"/>
+    </url>
+    
+    <!-- Contacto -->
+    <url>
+        <loc>https://sintia.co/contacto</loc>
+        <lastmod>2025-01-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="es" href="https://sintia.co/contacto"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sintia.co/contacto?lang=en"/>
+    </url>
+    
+    <!-- Política de Privacidad -->
+    <url>
+        <loc>https://sintia.co/privacidad</loc>
+        <lastmod>2025-01-28</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+        <xhtml:link rel="alternate" hreflang="es" href="https://sintia.co/privacidad"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sintia.co/privacidad?lang=en"/>
+    </url>
+    
+    <!-- Términos y Condiciones -->
+    <url>
+        <loc>https://sintia.co/terminos</loc>
+        <lastmod>2025-01-28</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+        <xhtml:link rel="alternate" hreflang="es" href="https://sintia.co/terminos"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sintia.co/terminos?lang=en"/>
+    </url>
+    
+    <!-- Política de Cookies -->
+    <url>
+        <loc>https://sintia.co/cookies</loc>
+        <lastmod>2025-01-28</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+        <xhtml:link rel="alternate" hreflang="es" href="https://sintia.co/cookies"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://sintia.co/cookies?lang=en"/>
+    </url>
+    
+</urlset>

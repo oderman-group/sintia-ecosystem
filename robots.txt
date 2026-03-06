@@ -1,0 +1,19 @@
+# robots.txt para SINTIA Ecosystem
+# https://sintia.co/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /includes/
+Disallow: /*.php$
+Allow: /index.php
+Allow: /blog.php
+Allow: /contacto.php
+Allow: /privacidad.php
+Allow: /terminos.php
+Allow: /cookies.php
+
+# Sitemap
+Sitemap: https://sintia.co/sitemap.xml
+
+# Crawl-delay (opcional)
+Crawl-delay: 1
