@@ -49,9 +49,9 @@ El archivo `.htaccess` ya está actualizado con `RewriteBase /sintia/`
 
 2. **Editar .env con tus credenciales:**
    ```env
-   EMAIL_SERVER=mail.plataformasintia.com
-   EMAIL_USER=info@plataformasintia.com
-   EMAIL_PASSWORD="B=XKY?y{VWiH"
+   EMAIL_SERVER=tu-servidor-smtp.com
+   EMAIL_USER=tu-email@dominio.com
+   EMAIL_PASSWORD="tu-contraseña-aquí"
    SMTPSECURE=ssl
    PORT_SEND_EMAIL=465
    SMTPAUTH=true
@@ -60,6 +60,8 @@ El archivo `.htaccess` ya está actualizado con `RewriteBase /sintia/`
    RECAPTCHA_SITE_KEY=
    RECAPTCHA_SECRET_KEY=
    ```
+   
+   **⚠️ IMPORTANTE:** Reemplaza los valores de ejemplo con tus credenciales reales. El archivo `.env` ya está en `.gitignore` y no se subirá a Git.
 
 ## 📋 Checklist Completo
 

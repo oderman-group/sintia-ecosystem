@@ -28,17 +28,24 @@ if (!validateSubmitTime($formStartTime, 3)) {
     exit;
 }
 
-// Validación anti-bot: reCAPTCHA v3
+// Validación anti-bot: reCAPTCHA v3 (solo si está configurado)
 $recaptchaToken = $_POST['recaptcha_token'] ?? '';
 $recaptchaSecret = defined('RECAPTCHA_SECRET_KEY') ? RECAPTCHA_SECRET_KEY : '';
 
-if (!empty($recaptchaSecret)) {
+// Solo validar reCAPTCHA si la clave secreta está configurada y no está vacía
+if (!empty($recaptchaSecret) && trim($recaptchaSecret) !== '') {
+    if (empty($recaptchaToken)) {
+        header('Location: ' . url('contacto') . '?error=' . urlencode('Token de reCAPTCHA no recibido. Por favor, recarga la página e intenta nuevamente.'));
+        exit;
+    }
+    
     $recaptchaResult = validateRecaptcha($recaptchaToken, $recaptchaSecret, 0.5);
     if (!$recaptchaResult['success']) {
         header('Location: ' . url('contacto') . '?error=' . urlencode($recaptchaResult['message']));
         exit;
     }
 }
+// Si reCAPTCHA no está configurado, el formulario funciona solo con honeypot y validación de tiempo
 
 // Obtener datos del formulario
 $data = [

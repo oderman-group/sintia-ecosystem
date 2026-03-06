@@ -137,7 +137,10 @@ $lang = getCurrentLang();
                         
                         <!-- reCAPTCHA v3 Script -->
                         <?php 
-                        $recaptchaSiteKey = defined('RECAPTCHA_SITE_KEY') && !empty(RECAPTCHA_SITE_KEY) ? RECAPTCHA_SITE_KEY : '';
+                        $recaptchaSiteKey = defined('RECAPTCHA_SITE_KEY') ? RECAPTCHA_SITE_KEY : '';
+                        // Verificar que la clave no esté vacía después de trim
+                        $recaptchaSiteKey = !empty($recaptchaSiteKey) && trim($recaptchaSiteKey) !== '' ? trim($recaptchaSiteKey) : '';
+                        
                         if (!empty($recaptchaSiteKey)): 
                         ?>
                         <script src="https://www.google.com/recaptcha/api.js?render=<?php echo e($recaptchaSiteKey); ?>"></script>
@@ -152,16 +155,60 @@ $lang = getCurrentLang();
                                     e.preventDefault();
                                     
                                     // Deshabilitar botón para evitar doble envío
-                                    submitBtn.disabled = true;
-                                    submitBtn.textContent = 'Enviando...';
+                                    if (submitBtn) {
+                                        submitBtn.disabled = true;
+                                        submitBtn.textContent = 'Enviando...';
+                                    }
+                                    
+                                    // Verificar que grecaptcha esté disponible
+                                    if (typeof grecaptcha === 'undefined') {
+                                        alert('Error: reCAPTCHA no está disponible. Por favor, recarga la página e intenta nuevamente.');
+                                        if (submitBtn) {
+                                            submitBtn.disabled = false;
+                                            submitBtn.textContent = 'Enviar Solicitud';
+                                        }
+                                        return;
+                                    }
                                     
                                     // Obtener token de reCAPTCHA
                                     grecaptcha.ready(function() {
                                         grecaptcha.execute('<?php echo e($recaptchaSiteKey); ?>', {action: 'submit'}).then(function(token) {
-                                            recaptchaToken.value = token;
-                                            form.submit();
+                                            if (token) {
+                                                recaptchaToken.value = token;
+                                                form.submit();
+                                            } else {
+                                                alert('Error al obtener token de reCAPTCHA. Por favor, intenta nuevamente.');
+                                                if (submitBtn) {
+                                                    submitBtn.disabled = false;
+                                                    submitBtn.textContent = 'Enviar Solicitud';
+                                                }
+                                            }
+                                        }).catch(function(error) {
+                                            console.error('Error en reCAPTCHA:', error);
+                                            alert('Error en reCAPTCHA. Por favor, recarga la página e intenta nuevamente.');
+                                            if (submitBtn) {
+                                                submitBtn.disabled = false;
+                                                submitBtn.textContent = 'Enviar Solicitud';
+                                            }
                                         });
                                     });
+                                });
+                            }
+                        });
+                        </script>
+                        <?php else: ?>
+                        <!-- reCAPTCHA no configurado - el formulario funcionará sin reCAPTCHA -->
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const form = document.getElementById('contact-form');
+                            const submitBtn = document.getElementById('submit-btn');
+                            
+                            if (form && submitBtn) {
+                                form.addEventListener('submit', function(e) {
+                                    // Deshabilitar botón para evitar doble envío
+                                    submitBtn.disabled = true;
+                                    submitBtn.textContent = 'Enviando...';
+                                    // El formulario se enviará normalmente sin reCAPTCHA
                                 });
                             }
                         });
