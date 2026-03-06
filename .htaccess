@@ -1,13 +1,11 @@
-# Configuración Apache para SINTIA Ecosystem - DESARROLLO LOCAL
+# Configuración Apache para SINTIA Ecosystem
 # 
-# INSTRUCCIONES:
-# 1. En desarrollo local, renombra este archivo a .htaccess
-# 2. O copia el contenido de este archivo al .htaccess principal
-# 3. En producción, usa el .htaccess con RewriteBase /sintia/
+# NOTA: Para desarrollo local, usa el archivo .htaccess.local
+# En producción (servidor), este archivo usa RewriteBase /sintia/
 
 # Habilitar RewriteEngine
 RewriteEngine On
-RewriteBase /sintia-ecoystem/
+RewriteBase /sintia/
 
 # Permitir acceso directo a archivos y directorios existentes
 RewriteCond %{REQUEST_FILENAME} -f [OR]
@@ -38,6 +36,8 @@ Options -Indexes
 # Headers de Seguridad
 <IfModule mod_headers.c>
     # Prevenir clickjacking (permitir frames de Google para reCAPTCHA)
+    # Nota: SAMEORIGIN permite frames del mismo origen, pero reCAPTCHA necesita frames de Google
+    # El CSP frame-src ya controla esto, así que podemos relajar X-Frame-Options o eliminarlo
     # Header always set X-Frame-Options "SAMEORIGIN"
     
     # Prevenir MIME type sniffing
@@ -74,6 +74,10 @@ Options -Indexes
     ExpiresByType font/woff "access plus 1 year"
     ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
+
+# Forzar HTTPS (descomentar en producción)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # Proteger archivos sensibles
 <FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql)$">
