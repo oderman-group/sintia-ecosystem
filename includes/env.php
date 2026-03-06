@@ -22,8 +22,11 @@ if (!function_exists('loadEnv')) {
                 $key = trim($key);
                 $value = trim($value);
                 
-                // Remover comillas si existen
-                $value = trim($value, '"\'');
+                // Remover comillas si existen (simples o dobles)
+                if ((substr($value, 0, 1) === '"' && substr($value, -1) === '"') ||
+                    (substr($value, 0, 1) === "'" && substr($value, -1) === "'")) {
+                    $value = substr($value, 1, -1);
+                }
                 
                 // Definir constante si no existe
                 if (!defined($key)) {
